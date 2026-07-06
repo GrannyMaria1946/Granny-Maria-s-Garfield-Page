@@ -86,7 +86,7 @@
     z-index: 5;
   }
 
-  #npc {
+  #Gabriel {
     position: absolute;
     width: 32px;
     height: 32px;
@@ -100,10 +100,10 @@
       0 4px 0 rgba(0,0,0,0.6);
     border: 3px solid #000;
     z-index: 5;
-    animation: npc-pulse 2.4s ease-in-out infinite;
+    animation: Gabriel-pulse 2.4s ease-in-out infinite;
   }
 
-  @keyframes npc-pulse {
+  @keyframes Gabriel-pulse {
     0%, 100% {
       box-shadow:
         inset -6px -6px 0 rgba(0,0,0,0.5),
@@ -120,7 +120,7 @@
     }
   }
 
-  #npc::after, #player::after {
+  #Gabriel::after, #player::after {
     content: "";
     position: absolute;
     top: -10px;
@@ -131,7 +131,7 @@
     box-shadow: 14px 0 0 #000;
   }
 
-  #npc-label, #player-label {
+  #Gabriel-label, #player-label {
     position: absolute;
     top: -26px;
     left: 50%;
@@ -141,7 +141,7 @@
     text-shadow: 2px 2px 0 #000;
   }
 
-  #npc-label { color: #1e5fff; }
+  #Gabriel-label { color: #1e5fff; }
   #player-label { color: #7a1f1f; }
 
   #prompt {
@@ -219,7 +219,7 @@
 <div id="game">
   <div id="ground-strip"></div>
   <div id="player"><div id="player-label">YOU</div></div>
-  <div id="npc"><div id="npc-label">NPC</div></div>
+  <div id="Gabriel"><div id="Gabriel-label">Gabriel</div></div>
   <div id="prompt">▼ PRESS SPACE ▼</div>
 
   <div id="dialogue-box">
@@ -242,7 +242,7 @@
 
   const game = document.getElementById('game');
   const player = document.getElementById('player');
-  const npc = document.getElementById('npc');
+  const Gabriel = document.getElementById('Gabriel');
   const prompt = document.getElementById('prompt');
   const dialogueBox = document.getElementById('dialogue-box');
   const dialogueText = document.getElementById('dialogue-text');
@@ -250,19 +250,19 @@
   const gameWidth = game.clientWidth;
   const gameHeight = game.clientHeight;
   const playerSize = 32;
-  const npcSize = 32;
+  const GabrielSize = 32;
 
   let playerX = 100;
   let playerY = 234;
   const speed = 4;
 
-  const npcX = 620;
-  const npcY = 234;
+  const GabrielX = 620;
+  const GabrielY = 234;
   const talkDistance = 60;
 
   let inDialogue = false;
   let dialogueIndex = 0;
-  let nearNpc = false;
+  let nearGabriel = false;
 
   const keys = {};
 
@@ -292,7 +292,7 @@
       } else {
         dialogueText.textContent = dialogueLines[dialogueIndex];
       }
-    } else if (nearNpc) {
+    } else if (nearGabriel) {
       startDialogue();
     }
   }
@@ -311,9 +311,9 @@
     window.location.href = redirectUrl;
   }
 
-  function distanceToNpc() {
-    const dx = (playerX + playerSize / 2) - (npcX + npcSize / 2);
-    const dy = (playerY + playerSize / 2) - (npcY + npcSize / 2);
+  function distanceToGabriel() {
+    const dx = (playerX + playerSize / 2) - (GabrielX + GabrielSize / 2);
+    const dy = (playerY + playerSize / 2) - (GabrielY + GabrielSize / 2);
     return Math.sqrt(dx * dx + dy * dy);
   }
 
@@ -330,8 +330,8 @@
       player.style.left = playerX + 'px';
       player.style.top = playerY + 'px';
 
-      nearNpc = distanceToNpc() < talkDistance;
-      prompt.style.display = nearNpc ? 'block' : 'none';
+      nearGabriel = distanceToGabriel() < talkDistance;
+      prompt.style.display = nearGabriel ? 'block' : 'none';
     }
 
     requestAnimationFrame(update);
