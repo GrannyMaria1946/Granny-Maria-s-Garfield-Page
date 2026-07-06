@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Talk to the NPC</title>
+<title>Talk to Gabriel </title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -285,7 +285,7 @@
 
   function handleSpace() {
     if (inDialogue) {
-      // Advance dialogue
+
       dialogueIndex++;
       if (dialogueIndex >= dialogueLines.length) {
         endDialogue();
@@ -324,7 +324,6 @@
       if (keys['ArrowLeft']) playerX -= speed;
       if (keys['ArrowRight']) playerX += speed;
 
-      // Clamp to bounds
       playerX = Math.max(0, Math.min(gameWidth - playerSize, playerX));
       playerY = Math.max(0, Math.min(gameHeight - playerSize, playerY));
 
