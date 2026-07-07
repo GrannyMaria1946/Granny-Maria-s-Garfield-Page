@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Talk to Gabriel </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+  }
+
+  #game {
+    position: relative;
+    width: 800px;
+    height: 500px;
+    margin: 40px auto;
+    background: #030303;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 4px, transparent 4px, transparent 32px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 4px, transparent 4px, transparent 32px),
+      repeating-linear-gradient(180deg, #050505 0px, #050505 32px, #020202 32px, #020202 64px);
+    border: 8px solid #000;
+    outline: 4px solid #1a1a1a;
+    outline-offset: -8px;
+    box-shadow:
+      0 0 0 4px #000,
+      0 8px 0 #000,
+      inset 0 0 40px rgba(0,0,0,0.9),
+      inset 0 0 0 4px #000;
+    overflow: hidden;
+  }
+
+  #game::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+    z-index: 8;
+    animation: flicker 6s infinite;
+  }
+
+  @keyframes flicker {
+    0%, 94%, 100% { opacity: 1; }
+    95% { opacity: 0.85; }
+    96% { opacity: 1; }
+    97% { opacity: 0.7; }
+    98% { opacity: 1; }
+  }
+
+  #ground-strip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: #0a0a0a;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 4px, transparent 4px, transparent 32px);
+    border-top: 6px solid #000;
+    box-shadow: 0 -4px 0 rgba(0,0,0,0.6);
+  }
+
+  #player {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    left: 100px;
+    top: 234px;
+    background: #7a1f1f;
+    box-shadow:
+      inset -6px -6px 0 rgba(0,0,0,0.5),
+      inset 6px 6px 0 rgba(255,255,255,0.08),
+      0 4px 0 rgba(0,0,0,0.6);
+    border: 3px solid #000;
+    z-index: 5;
+  }
+
+  #Gabriel {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    left: 384px;
+    top: 46px;
+    background: #1e5fff;
+    box-shadow:
+      inset -6px -6px 0 rgba(0,0,0,0.5),
+      inset 6px 6px 0 rgba(150,190,255,0.35),
+      0 0 18px 4px rgba(30,95,255,0.55),
+      0 4px 0 rgba(0,0,0,0.6);
+    border: 3px solid #000;
+    z-index: 5;
+    animation: Gabriel-pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes Gabriel-pulse {
+    0%, 100% {
+      box-shadow:
+        inset -6px -6px 0 rgba(0,0,0,0.5),
+        inset 6px 6px 0 rgba(150,190,255,0.35),
+        0 0 18px 4px rgba(30,95,255,0.55),
+        0 4px 0 rgba(0,0,0,0.6);
+    }
+    50% {
+      box-shadow:
+        inset -6px -6px 0 rgba(0,0,0,0.5),
+        inset 6px 6px 0 rgba(150,190,255,0.5),
+        0 0 30px 10px rgba(30,95,255,0.85),
+        0 4px 0 rgba(0,0,0,0.6);
+    }
+  }
+
+  #Gabriel::after, #player::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 6px;
+    width: 6px;
+    height: 6px;
+    background: #000;
+    box-shadow: 14px 0 0 #000;
+  }
+
+  #Gabriel-label, #player-label {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    white-space: nowrap;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  #Gabriel-label { color: #1e5fff; }
+  #player-label { color: #7a1f1f; }
+
+  #prompt {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #4a6fff;
+    font-size: 10px;
+    text-shadow: 2px 2px 0 #000;
+    display: none;
+    animation: blink 0.8s steps(1) infinite;
+    z-index: 9;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0.3; }
+  }
+
+  #dialogue-box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 130px;
+    background: #000;
+    border-top: 6px solid #1e3a8a;
+    box-shadow: inset 0 6px 0 #000, inset 0 20px 30px -20px rgba(30,95,255,0.15);
+    color: #b8c4e0;
+    box-sizing: border-box;
+    padding: 22px 28px;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 10;
+  }
+
+  #dialogue-box::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 24px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #1e3a8a;
+  }
+
+  #dialogue-text {
+    font-size: 12px;
+    line-height: 2;
+    text-shadow: 0 0 8px rgba(30,95,255,0.4);
+  }
+
+  #dialogue-continue {
+    align-self: flex-end;
+    font-size: 8px;
+    color: #3a5aff;
+    margin-top: 12px;
+    animation: blink 0.8s steps(1) infinite;
+  }
+
+  #instructions {
+    text-align: center;
+    color: #3a3a4a;
+    font-size: 10px;
+    margin-top: 16px;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  #cage {
+    position: absolute;
+    left: 354px;
+    top: 20px;
+    width: 92px;
+    height: 90px;
+    z-index: 6;
+    pointer-events: none;
+  }
+
+  #cage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      #2b2b2b 0px, #2b2b2b 5px,
+      transparent 5px, transparent 17px
+    );
+    box-shadow: inset 0 0 0 4px #1a1a1a;
+  }
+
+  #cage::after {
+    content: "";
+    position: absolute;
+    left: -4px;
+    right: -4px;
+    top: 0;
+    bottom: 0;
+    box-shadow:
+      inset 0 6px 0 #1a1a1a,
+      inset 0 -6px 0 #1a1a1a;
+  }
+
+  .key-item {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    z-index: 4;
+  }
+
+  .key-item .key-body {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 0;
+    top: 4px;
+    border: 2px solid #b8860b;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .key-item .key-shaft {
+    position: absolute;
+    left: 9px;
+    top: 7px;
+    width: 9px;
+    height: 4px;
+    background: #ffd700;
+    box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.6);
+  }
+
+  .key-item .key-teeth {
+    position: absolute;
+    left: 14px;
+    top: 10px;
+    width: 4px;
+    height: 3px;
+    background: #ffd700;
+    box-shadow: 0 -4px 0 #ffd700;
+  }
+
+  .key-item.collected {
+    display: none;
+  }
+
+  #hud {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: #ffd700;
+    font-size: 10px;
+    text-shadow: 2px 2px 0 #000;
+    z-index: 9;
+  }
+
+  #lockout {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+
+  #lockout.active {
+    display: flex;
+  }
+
+  #lockout-text {
+    color: #ff1414;
+    font-size: 22px;
+    text-align: center;
+    text-shadow:
+      0 0 10px rgba(255, 0, 0, 0.8),
+      0 0 20px rgba(255, 0, 0, 0.6);
+    animation: lockout-pulse 0.5s steps(1) infinite;
+  }
+
+  @keyframes lockout-pulse {
+    50% { opacity: 0.5; }
+  }
+</style>
+</head>
+<body>
+
+<div id="game">
+  <div id="ground-strip"></div>
+  <div id="hud">KEYS: 0/4</div>
+
+  <div id="player"><div id="player-label">YOU</div></div>
+  <div id="Gabriel"><div id="Gabriel-label">Gabriel</div></div>
+  <div id="cage"></div>
+
+  <div class="key-item" id="key-1" style="left:50px; top:70px;">
+    <div class="key-body"></div><div class="key-shaft"></div><div class="key-teeth"></div>
+  </div>
+  <div class="key-item" id="key-2" style="left:730px; top:70px;">
+    <div class="key-body"></div><div class="key-shaft"></div><div class="key-teeth"></div>
+  </div>
+  <div class="key-item" id="key-3" style="left:50px; top:370px;">
+    <div class="key-body"></div><div class="key-shaft"></div><div class="key-teeth"></div>
+  </div>
+  <div class="key-item" id="key-4" style="left:730px; top:370px;">
+    <div class="key-body"></div><div class="key-shaft"></div><div class="key-teeth"></div>
+  </div>
+
+  <div id="prompt">▼ PRESS SPACE ▼</div>
+
+  <div id="dialogue-box">
+    <div id="dialogue-text"></div>
+    <div id="dialogue-continue">▼ SPACE</div>
+  </div>
+
+  <div id="lockout">
+    <div id="lockout-text">LOCKED OUT</div>
+  </div>
+</div>
+
+<div id="instructions">ARROW KEYS TO MOVE  •  SPACE TO TALK</div>
+
+<script>
+  const dialogueLines = [
+    "hello you listened to me",
+    "now please help me out"
+  ];
+
+  
+  const redirectUrl = "index.html";
+
+  const lockoutRedirectUrl = "index.html";
+
+  const lockoutDuration = 15000;
+
+  const game = document.getElementById('game');
+  const player = document.getElementById('player');
+  const Gabriel = document.getElementById('Gabriel');
+  const prompt = document.getElementById('prompt');
+  const dialogueBox = document.getElementById('dialogue-box');
+  const dialogueText = document.getElementById('dialogue-text');
+  const hud = document.getElementById('hud');
+  const lockout = document.getElementById('lockout');
+
+  const gameWidth = game.clientWidth;
+  const gameHeight = game.clientHeight;
+  const playerSize = 32;
+  const GabrielSize = 32;
+
+  let playerX = 100;
+  let playerY = 234;
+  const speed = 4;
+
+  const GabrielX = 384;
+  const GabrielY = 46;
+  const talkDistance = 60;
+
+  let inDialogue = false;
+  let dialogueIndex = 0;
+  let nearGabriel = false;
+  let lockedOut = false;
+
+  const totalKeys = 4;
+  let keysCollected = 0;
+  const collectRadius = 26;
+
+  const keyItems = [
+    { el: document.getElementById('key-1'), x: 50,  y: 70,  collected: false },
+    { el: document.getElementById('key-2'), x: 730, y: 70,  collected: false },
+    { el: document.getElementById('key-3'), x: 50,  y: 370, collected: false },
+    { el: document.getElementById('key-4'), x: 730, y: 370, collected: false }
+  ];
+
+  const keysPressed = {};
+
+  document.addEventListener('keydown', (e) => {
+    keysPressed[e.key] = true;
+
+    if (e.key === ' ') {
+      e.preventDefault();
+      handleSpace();
+    }
+
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('keyup', (e) => {
+    keysPressed[e.key] = false;
+  });
+
+  function handleSpace() {
+    if (lockedOut) return;
+
+    if (inDialogue) {
+
+      dialogueIndex++;
+      if (dialogueIndex >= dialogueLines.length) {
+        endDialogue();
+      } else {
+        dialogueText.textContent = dialogueLines[dialogueIndex];
+      }
+    } else if (nearGabriel) {
+      startDialogue();
+    }
+  }
+
+  function startDialogue() {
+    inDialogue = true;
+    dialogueIndex = 0;
+    dialogueText.textContent = dialogueLines[0];
+    dialogueBox.style.display = 'flex';
+    prompt.style.display = 'none';
+  }
+
+  function endDialogue() {
+    inDialogue = false;
+    dialogueBox.style.display = 'none';
+  }
+
+  function distanceToGabriel() {
+    const dx = (playerX + playerSize / 2) - (GabrielX + GabrielSize / 2);
+    const dy = (playerY + playerSize / 2) - (GabrielY + GabrielSize / 2);
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function distanceToKey(key) {
+    const dx = (playerX + playerSize / 2) - (key.x + 9);
+    const dy = (playerY + playerSize / 2) - (key.y + 9);
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function checkKeyPickups() {
+    for (const key of keyItems) {
+      if (key.collected) continue;
+      if (distanceToKey(key) < collectRadius) {
+        if (keysCollected < 3) {
+          // Normal pickup
+          key.collected = true;
+          key.el.classList.add('collected');
+          keysCollected++;
+          hud.textContent = `KEYS: ${keysCollected}/${totalKeys}`;
+        } else {
+
+          triggerLockout();
+        }
+        break;
+      }
+    }
+  }
+
+  function triggerLockout() {
+    if (lockedOut) return;
+    lockedOut = true;
+    lockout.classList.add('active');
+    prompt.style.display = 'none';
+
+    setTimeout(() => {
+      window.location.href = lockoutRedirectUrl;
+    }, lockoutDuration);
+  }
+
+  function update() {
+    if (!inDialogue && !lockedOut) {
+      if (keysPressed['ArrowUp']) playerY -= speed;
+      if (keysPressed['ArrowDown']) playerY += speed;
+      if (keysPressed['ArrowLeft']) playerX -= speed;
+      if (keysPressed['ArrowRight']) playerX += speed;
+
+      playerX = Math.max(0, Math.min(gameWidth - playerSize, playerX));
+      playerY = Math.max(0, Math.min(gameHeight - playerSize, playerY));
+
+      player.style.left = playerX + 'px';
+      player.style.top = playerY + 'px';
+
+      nearGabriel = distanceToGabriel() < talkDistance;
+      prompt.style.display = nearGabriel ? 'block' : 'none';
+
+      checkKeyPickups();
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  update();
+</script>
+
+</body>
+</html>
+
+<audio autoplay>
+  <source src="Nothingmusic.mp3" type="audio/mpeg" />
+</audio>
