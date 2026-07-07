@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOCKED DOWN</title>
+<style>
+  html,body{
+    margin:0;
+    height:100%;
+    background:#000000;
+    background-image:
+      radial-gradient(circle at 20% 20%, #0a0a0a 0%, #000 60%);
+    font-family:Verdana, Geneva, Arial, sans-serif;
+    font-size:11px;
+    color:#c0c0c0;
+  }
+  .screen{
+    display:none;
+    min-height:100vh;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .screen.active{
+    display:flex;
+  }
+
+  .win{
+    width:320px;
+    background:#1a1a1a;
+    border:1px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #444,
+      inset -1px -1px 0 #000,
+      2px 2px 6px rgba(0,0,0,0.8);
+  }
+  .win.wide{
+    width:520px;
+  }
+  .titlebar{
+    background:linear-gradient(180deg,#3a3a4a 0%, #23232e 45%, #14141a 100%);
+    color:#e8e8e8;
+    font-weight:bold;
+    font-size:11px;
+    padding:4px 6px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #000;
+    text-shadow:1px 1px 0 #000;
+    letter-spacing:0.5px;
+  }
+  .titlebar .tleft{
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .titlebar .ticon{
+    width:10px;
+    height:10px;
+    background:#5a7a9a;
+    border:1px solid #0a0a0a;
+    box-shadow: inset 1px 1px 0 #9ab;
+  }
+  .winbtns{
+    display:flex;
+    gap:3px;
+  }
+  .winbtns span{
+    width:14px;
+    height:12px;
+    background:linear-gradient(180deg,#4a4a55,#222228);
+    border:1px solid #000;
+    display:inline-block;
+    text-align:center;
+    line-height:11px;
+    font-size:9px;
+    color:#aaa;
+    box-shadow: inset 1px 1px 0 #666;
+  }
+
+  .win-body{
+    padding:16px 18px 18px;
+    background:#1e1e1e;
+    background-image:linear-gradient(180deg, #202020 0%, #171717 100%);
+  }
+
+  h1.lockhead{
+    font-size:12px;
+    color:#dcdcdc;
+    margin:0 0 4px;
+    text-shadow:1px 1px 0 #000;
+  }
+  p.sub{
+    font-size:10px;
+    color:#7d7d7d;
+    margin:0 0 14px;
+    line-height:1.5;
+  }
+
+  input[type="password"], textarea{
+    width:100%;
+    font-family:Verdana, Geneva, Arial, sans-serif;
+    font-size:11px;
+    background:#0e0e0e;
+    color:#8fdc8f;
+    border:1px solid #000;
+    box-shadow:
+      inset 1px 1px 2px #000,
+      inset -1px -1px 0 #333;
+    padding:6px 7px;
+    outline:none;
+    box-sizing:border-box;
+  }
+  input[type="password"]:focus, textarea:focus{
+    background:#111;
+    box-shadow:
+      inset 1px 1px 2px #000,
+      inset -1px -1px 0 #333,
+      0 0 0 1px #3a5a3a;
+  }
+  input[type="password"].shake{
+    animation:shake 0.4s ease;
+  }
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-6px);}
+    40%,60%{transform:translateX(6px);}
+  }
+
+  button, .btn3d{
+    font-family:Verdana, Geneva, Arial, sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    color:#d8d8d8;
+    background:linear-gradient(180deg, #4a4a52 0%, #2a2a30 50%, #1c1c20 100%);
+    border:1px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #6a6a72,
+      inset -1px -1px 0 #000,
+      1px 1px 2px rgba(0,0,0,0.6);
+    padding:6px 14px;
+    cursor:pointer;
+  }
+  button:active{
+    box-shadow:
+      inset -1px -1px 0 #6a6a72,
+      inset 1px 1px 0 #000;
+  }
+  .row{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+  }
+  .row input[type="password"]{
+    flex:1;
+  }
+
+  .error-msg{
+    font-size:10px;
+    color:#e05a4e;
+    min-height:14px;
+    margin-top:8px;
+    text-shadow:1px 1px 0 #000;
+  }
+
+  .toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .blink{
+    animation:blink 1s steps(1) infinite;
+    color:#8fdc8f;
+  }
+  @keyframes blink{
+    50%{opacity:0;}
+  }
+  .paragraph-box{
+    background:#0e0e0e;
+    color:#c9d8c9;
+    border:1px solid #000;
+    box-shadow:
+      inset 1px 1px 2px #000,
+      inset -1px -1px 0 #333;
+    padding:14px 16px;
+    line-height:1.6;
+    font-size:11px;
+    min-height:200px;
+    white-space:pre-wrap;
+  }
+
+  .hint-row{
+    margin-top:10px;
+    text-align:center;
+  }
+  .hint-box{
+    display:none;
+    margin-top:8px;
+    background:#0e0e0e;
+    color:#8a8a8a;
+    border:1px solid #000;
+    box-shadow:
+      inset 1px 1px 2px #000,
+      inset -1px -1px 0 #333;
+    padding:8px 10px;
+    font-size:10px;
+    line-height:1.5;
+  }
+  .hint-box.show{
+    display:block;
+  }
+
+  embed.pdf-embed{
+    width:100%;
+    height:70vh;
+    display:block;
+    background:#000;
+    border:1px solid #000;
+    box-shadow:
+      inset 1px 1px 2px #000,
+      inset -1px -1px 0 #333;
+  }
+
+  a.linklike{
+    color:#7aa7d9;
+    text-decoration:underline;
+    font-size:10px;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+  }
+</style>
+</head>
+<body>
+
+  <div id="lockScreen" class="screen active">
+    <div class="win">
+      <div class="titlebar">
+        <div class="tleft"><span class="ticon"></span> </div>
+        <div class="winbtns"><span>_</span><span>&#9633;</span><span>X</span></div>
+      </div>
+      <div class="win-body">
+        <h1 class="lockhead">&#128274; ACCESS RESTRICTED</h1>
+        <p class="sub">This resource is password protected.<br></p>
+        <form id="lockForm" autocomplete="off">
+          <label style="font-size:10px;color:#8a8a8a;">Password:</label>
+          <div class="row">
+            <input type="password" id="passwordInput" autofocus>
+            <button type="submit">OK</button>
+          </div>
+        </form>
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="hint-row">
+          <a class="linklike" id="hintToggle">[ need a hint? ]</a>
+          <div class="hint-box" id="hintBox">my father</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="contentScreen" class="screen">
+    <div class="win wide">
+      <div class="titlebar">
+        <div class="tleft"><span class="ticon"></span> </div>
+        <div class="winbtns"><span>_</span><span>&#9633;</span><span>X</span></div>
+      </div>
+      <div class="win-body">
+        <div class="toolbar">
+          <span style="font-size:10px;color:#8a8a8a;">File &gt; Edit &gt; <span class="blink">_</span></span>
+          <a class="linklike" id="lockAgainBtn">[ lock ]</a>
+        </div>
+        <embed id="pdfViewer" class="pdf-embed" src="doker.pdf" type="application/pdf">
+      </div>
+    </div>
+  </div>
+
+<script>
+
+const PASSWORD = "doker";
+
+  const lockScreen = document.getElementById('lockScreen');
+  const contentScreen = document.getElementById('contentScreen');
+  const lockForm = document.getElementById('lockForm');
+  const passwordInput = document.getElementById('passwordInput');
+  const errorMsg = document.getElementById('errorMsg');
+  const lockAgainBtn = document.getElementById('lockAgainBtn');
+  const hintToggle = document.getElementById('hintToggle');
+  const hintBox = document.getElementById('hintBox');
+  const pdfViewer = document.getElementById('pdfViewer');
+
+  hintToggle.addEventListener('click', function(){
+    hintBox.classList.toggle('show');
+  });
+
+  lockForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(passwordInput.value === PASSWORD){
+      lockScreen.classList.remove('active');
+      contentScreen.classList.add('active');
+      errorMsg.textContent = '';
+      passwordInput.classList.remove('shake');
+    } else {
+      errorMsg.textContent = '>> ACCESS DENIED: incorrect password';
+      passwordInput.classList.remove('shake');
+      void passwordInput.offsetWidth;
+      passwordInput.classList.add('shake');
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  });
+
+  lockAgainBtn.addEventListener('click', function(){
+    contentScreen.classList.remove('active');
+    lockScreen.classList.add('active');
+    passwordInput.value = '';
+    passwordInput.focus();
+  });
+
+</script>
+
+</body>
+</html>
