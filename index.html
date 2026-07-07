@@ -4,6 +4,43 @@
 <meta charset="UTF-8">
 <title>Granny Maria's Garfield Page!</title>
 <link rel="stylesheet" type="text/css" href="style.css">
+<style>
+  .beebox {
+    position: relative;
+    background: #000;
+    color: #fff;
+    margin: 20px 0;
+    padding: 40px 20px;
+    text-align: center;
+    font-family: "Courier New", monospace;
+    overflow: hidden;
+  }
+  .beebox .beebox-headline {
+    font-size: 2.5em;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 15px 0;
+    color: #fff;
+  }
+  .beebox .beebox-message {
+    font-size: 1em;
+    color: #ccc;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  .beebox .corner-text {
+    position: absolute;
+    font-size: 0.7em;
+    color: #555;
+    letter-spacing: 0.1em;
+  }
+  .beebox .corner-tl { top: 8px; left: 12px; }
+  .beebox .corner-tr { top: 8px; right: 12px; }
+  .beebox .corner-bl { bottom: 8px; left: 12px; }
+  .beebox .corner-br { bottom: 8px; right: 12px; }
+</style>
 </head>
 <body>
 <div class="pagewrap">
@@ -25,6 +62,15 @@
       <td><a href="blog.html">DEVELOPER BLOG</a></td>
     </tr>
   </table>
+
+  <div class="beebox">
+    <span class="corner-text corner-tl"><a href="CLASSIFIED.pdf"> please</a> </span>
+    <span class="corner-text corner-tr"></span>
+    <span class="corner-text corner-bl"></span>
+    <span class="corner-text corner-br"><a href="Psychological Evaluation .pdf"> help me</a> </span>
+    <p class="beebox-headline">SEIZED BY THE GIA</p>
+    <p class="beebox-message"> this website has been seized by the GIA for unsolicited activities</p>
+  </div>
 
   <div class="contentbox">
     <table width="100%">

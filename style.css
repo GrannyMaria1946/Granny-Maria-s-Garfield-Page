@@ -107,6 +107,33 @@ a:visited {
   padding: 6px;
 }
 
+.anomaly-box {
+  background-color: #000000;
+  color: #e8e8e8;
+  font-family: "Courier New", Courier, monospace;
+  border: 1px solid #333333;
+  padding: 16px 18px;
+  margin-top: 14px;
+  text-align: left;
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+}
+
+.anomaly-line {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+}
+
+.anomaly-line:first-child {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.anomaly-cursor {
+  margin: 4px 0 0 0;
+  animation: blinker 1s step-start infinite;
+}
+
 .footer {
   text-align: center;
   font-size: 11px;
